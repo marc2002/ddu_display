@@ -13,11 +13,15 @@ end
 local sim         = ac.getSim()
 local car         = ac.getCar(0)
 local state       = ac.getCarState(0)
+local wheelLF     = car.wheels[0]
+local wheelRF     = car.wheels[1]
+local wheelLR     = car.wheels[2]
+local wheelRR     = car.wheels[3]
 local FONT_SIZES  = {
     gears = 50,
     laptimes = 50,
     electronics = 30,
-    rims = 50
+    rims = 45
 }
 
 local currentABS  = ...
@@ -92,15 +96,20 @@ function script.update(dt)
     ui.dwriteTextAligned(lastlaptimetext, FONT_SIZES.laptimes, ui.Alignment.End, ui.Alignment.End, vec2(800, 800), false,
         lastlaptimecolor)
     ui.popDWriteFont()
-       
-    local deltatext = string.format("%.2f", math.clamp(car.performanceMeter, -99.99, 99.99))
-    local deltaposition = vec2(440, 460)
-    local deltacolor = rgbm(1, 1, 1, 1)
-    ui.setCursor(vec2(195, -167))
+
+    local getDeltaLapTime = function()
+        local milliseconds = ac.getCar(0).performanceMeter * 1000.0
+        local total_seconds = milliseconds / 1000
+        local seconds = math.floor(total_seconds)
+        local millis = (milliseconds % 1000) / 10
+        local sign = milliseconds == 0 and " " or (milliseconds > 0 and "+" or "-")
+        local textColor = milliseconds > 0 and rgb(1, 0.2, 0.2) or rgb(0.2, 1, 0.2)
+        return string.format("%s %02d.%02d", sign, seconds, millis), textColor
+    end
+    local deltaText, textColor  = getDeltaLapTime()
+    ui.setCursor(vec2(195, 205))
     ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
-    ui.dwriteTextAligned(deltatext, FONT_SIZES.laptimes, ui.Alignment.End, ui.Alignment.End, vec2(800, 800), false,
-        deltacolor)
-    ui.popDWriteFont()
+    ui.dwriteTextAligned(deltaText, FONT_SIZES.laptimes, ui.Alignment.End, ui.Alignment.Center, vec2(800, 800), false, textColor)
 
     local formatLapTime = function(millis)
         local seconds = math.floor(millis / 1000)
@@ -161,13 +170,99 @@ function script.update(dt)
         fplcolor)
     ui.popDWriteFont()
 
-    --local wheellf = car.wheels[1]
-   -- local disclftext = string.format("%d", temp)
-   -- local disclfposition = vec2(440, 460)
-   -- local disclfcolor = rgbm(1, 1, 1, 1)
-   -- ui.setCursor(vec2(25, 469))
-    --ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
-    --ui.dwriteTextAligned(disclftext, FONT_SIZES.rims, ui.Alignment.End, ui.Alignment.End, vec2(800, 800), false,
-     --   disclfcolor)
-   -- ui.popDWriteFont()
+    local wheelLFtext = string.format("%d", wheelLF.discTemperature)
+    local wheelLFcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(-382, 424))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(wheelLFtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    wheelLFcolor)
+    ui.popDWriteFont()
+
+    local wheelRFtext = string.format("%d", wheelRF.discTemperature)
+    local wheelRFcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(-242, 424))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(wheelRFtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    wheelRFcolor)
+    ui.popDWriteFont()
+
+    local wheelLRtext = string.format("%d", wheelLR.discTemperature)
+    local wheelLRcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(-382, 482))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(wheelLRtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    wheelLRcolor)
+    ui.popDWriteFont()
+
+    local wheelRRtext = string.format("%d", wheelRR.discTemperature)
+    local wheelRRcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(-242, 482))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(wheelRRtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    wheelRRcolor)
+    ui.popDWriteFont()
+
+    local presLFtext = string.format("%.1f", wheelLF.tyrePressure)
+    local presLFcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(-62, 424))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(presLFtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    presLFcolor)
+    ui.popDWriteFont()
+
+    local presRFtext = string.format("%.1f", wheelRF.tyrePressure)
+    local presRFcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(85, 424))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(presRFtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    presRFcolor)
+    ui.popDWriteFont()
+
+    local presLRtext = string.format("%.1f", wheelLR.tyrePressure)
+    local presLRcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(-62, 482))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(presLRtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    presLRcolor)
+    ui.popDWriteFont()
+
+    local presRRtext = string.format("%.1f", wheelRR.tyrePressure)
+    local presRRcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(85, 482))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(presRRtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    presRRcolor)
+    ui.popDWriteFont()
+
+    local tempLFtext = string.format("%d", wheelLF.tyreCoreTemperature)
+    local tempLFcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(272, 424))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(tempLFtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    tempLFcolor)
+    ui.popDWriteFont()
+
+    local tempRFtext = string.format("%d", wheelRF.tyreCoreTemperature)
+    local tempRFcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(409, 424))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(tempRFtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    tempRFcolor)
+    ui.popDWriteFont()
+
+    local tempLRtext = string.format("%d", wheelLR.tyreCoreTemperature)
+    local tempLRcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(272, 482))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(tempLRtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    tempLRcolor)
+    ui.popDWriteFont()
+
+    local tempRRtext = string.format("%d", wheelRR.tyreCoreTemperature)
+    local RRcolor = rgbm(1, 1, 1, 1)
+    ui.setCursor(vec2(409, 482))
+    ui.pushDWriteFont("Sui Generis Free:tex/sui_generis_free.ttf")
+    ui.dwriteTextAligned(tempRRtext, FONT_SIZES.rims, ui.Alignment.Center, ui.Alignment.Center, vec2(1000, 800), false,
+    tempRRcolor)
+    ui.popDWriteFont()
 end
